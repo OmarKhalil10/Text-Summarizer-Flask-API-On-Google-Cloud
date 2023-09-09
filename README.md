@@ -81,7 +81,78 @@ Confirm that your container is running by checking its presence in the list of c
 
 Now that we have Dockerized our container, it is time to set up our cloud infrastructure.
 
-### 3. Setting-up a service account
+### 3. Configure Cloud Storage bucket to store Terraform state
+By default, Terraform saves the state locally in a `terraform.tfstate` file. However, if we want to provision our infrastructure through CI/CD we should use a backend for Terraform, so our state is stored remotely in a Cloud Storage bucket. A useful tutorial for creating this can be found [here](https://cloud.google.com/docs/terraform/resource-management/store-state).
+
+Enable the Cloud Storage API:
+
+```
+gcloud services enable storage.googleapis.com
+```
+
+Add the following contents to `main.tf` inside `infra/backend`
+
+```
+# Enable storage API
+resource "google_project_service" "storage" {
+  provider           = google
+  service            = "storage.googleapis.com"
+  disable_on_destroy = false
+}
+```
+
+#### Configure Terraform to store state in a Cloud Storage bucket
+
+In the following steps, you create a Cloud Storage bucket and change the backend configuration to your new bucket and your Google Cloud project.
+
+#### Create the bucket
+
+1. Add the following [google_storage_bucket](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/storage_bucket) Terraform resource to a Terraform config file, such as `main.tf` inside `infra/backend`.
+
+```
+# This is used so there is some time for the activation of the API's to propagate through 
+# Google Cloud before actually calling them.
+resource "time_sleep" "wait_30_seconds" {
+  create_duration = "30s"
+  depends_on      = [google_project_service.storage]
+}
+
+// Terraform plugin for creating random IDs
+resource "random_id" "instance_id" {
+  byte_length = 8
+}
+
+resource "google_storage_bucket" "default" {
+  name          = "bucket-tfstate-${random_id.instance_id.hex}"
+  force_destroy = false
+  location      = var.region
+  storage_class = "STANDARD"
+  versioning {
+    enabled = true
+  }
+  depends_on = [time_sleep.wait_30_seconds]
+}
+
+output "bucket_name" {
+  description = "Terraform backend bucket name"
+  value       = google_storage_bucket.default.name
+}
+```
+
+#### Change the backend configuration
+
+Add the following text to a new Terraform configuration file called `backend.tf` inside `infra/backend`
+
+```
+terraform {
+  backend "gcs" {
+    bucket = "bucket-tfstate-f708fe1a360136f1"
+    prefix = "terraform/state"
+  }
+}
+```
+
+### 4. Setting-up a service account
 
 Ideally, we want to restrict individual users from making changes to the cloud infrastructure. Instead, we'll employ a [service account](https://cloud.google.com/iam/docs/service-accounts) and assign it the necessary permissions. In a subsequent phase, we can integrate the credentials of this service account into a CI/CD pipeline to trigger our deployments. However, for now, we'll create a service account and utilize it from our local machine.
 
@@ -97,7 +168,7 @@ Then, proceed to "IAM & Admin" > ["IAM"](https://console.cloud.google.com/iam-ad
 
 Now that we've created a service account with the necessary permissions for provisioning our infrastructure, it's time to define our infrastructure.
 
-### 4. Building our cloud infrastructure with Terraform
+### 5. Building our cloud infrastructure with Terraform
 
 The first thing that we need to do is install Terraform by following the intructions [here](https://learn.hashicorp.com/tutorials/terraform/install-cli).
 
@@ -356,7 +427,7 @@ variable "docker_image" {
 
 Now that we have created our Terraform script, we can start using it to provision our infrastructure.
 
-### 5. Provisioning our cloud infrastructure with Terraform
+### 6. Provisioning our cloud infrastructure with Terraform
 
 Previously, we set up a service account with the necessary permissions for managing our infrastructure. In the Google Cloud Platform, return to `"IAM & Admin" > "Service Accounts."` In the `"Actions"` column for your service account, click the `three dots`. Choose `"Manage Keys,"` then select `"Add Key" > "New Key."` Opt for `JSON` as the Key Type, which will prompt the download of a file to your local machine. Copy this downloaded file to the directory where you've created your `main.tf` and `variables.tf` files, and rename it to `infra_service_account.json`. Subsequently, craft a file named `.env` with the following content:
 
@@ -403,7 +474,7 @@ Error: Error waiting to create Service: resource is in failed state "Ready:False
 
 This error is anticipated because we've configured our infrastructure to search for an image named `summarizer-app` within the `docker-repository` which we haven't created yet. Nevertheless, the preceding steps have executed successfully. If you navigate to the Artifact Registry in the UI, you'll see that our repository has indeed been created. This signifies that we are now prepared to push our Docker image to the repository to complete our setup.
 
-### 6. Pushing the Docker image to Artifact Registry on Google Cloud
+### 7. Pushing the Docker image to Artifact Registry on Google Cloud
 
 To facilitate the upload of our Docker image to the cloud, we must first acquire the key for the Terraform-created `docker-pusher` service account. You can locate this service account in the GCP Console under `IAM & Admin > Service Accounts.` Here, you should generate and download a service account key in `JSON` format, similar to the process we followed earlier for the infrastructure account. Rename this file to `docker_service_account.json` and save it in the same directory as `app.py` and `Dockerfile`.
 
@@ -447,7 +518,7 @@ docker push europe-west6-docker.pkg.dev/ml-tf-398511/docker-repository/summarize
 
 If this step is completed successfully, you should now be able to view your Docker image within the `docker-repository` repository in the [Artifact Registry](https://console.cloud.google.com/artifacts) section of the Google Cloud Platform.
 
-### 7. Finishing up and Testing our API
+### 8. Finishing up and Testing our API
 
 This means we can now finalize deploying our API. Navigate to your directory containing `main.tf`, and apply your files once again:
 
@@ -474,6 +545,10 @@ Nevertheless, there's still room for improvement. It would be advantageous to st
 
 I hope you found this `README` helpful, and please feel free to share any feedback you may have!
 
+## 📚 Other useful resources
+
+[Hugging Face model used for the summarization](https://huggingface.co/facebook/bart-large-cnn?text=The+tower+is+324+metres+%281%2C063+ft%29+tall%2C+about+the+same+height+as+an+81-storey+building%2C+and+the+tallest+structure+in+Paris.+Its+base+is+square%2C+measuring+125+metres+%28410+ft%29+on+each+side.+During+its+construction%2C+the+Eiffel+Tower+surpassed+the+Washington+Monument+to+become+the+tallest+man-made+structure+in+the+world%2C+a+title+it+held+for+41+years+until+the+Chrysler+Building+in+New+York+City+was+finished+in+1930.+It+was+the+first+structure+to+reach+a+height+of+300+metres.+Due+to+the+addition+of+a+broadcasting+aerial+at+the+top+of+the+tower+in+1957%2C+it+is+now+taller+than+the+Chrysler+Building+by+5.2+metres+%2817+ft%29.+Excluding+transmitters%2C+the+Eiffel+Tower+is+the+second+tallest+free-standing+structure+in+France+after+the+Millau+Viaduct.)
+
 ## Contributions
 
 Contributions and enhancements to **Text-Summarizer-Flask-API-On-Google-Cloud** are welcome! Feel free to fork the repository, make improvements, and submit pull requests.
@@ -489,4 +564,3 @@ This project is licensed under the MIT License. See the [LICENSE](https://github
 ## Contact
 
 If you have any questions or suggestions, please feel free to [contact me](mailto:omar.khalil498@gmail.com).
-
