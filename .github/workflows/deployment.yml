@@ -11,7 +11,7 @@ jobs:
     name: Setup, Build, Publish, and Deploy
     runs-on: ubuntu-latest
     env:
-          IMAGE_NAME: europe-west1-docker.pkg.dev/flask-cloud-368121/docker-repository/first-flask-app
+          IMAGE_NAME: europe-west6-docker.pkg.dev/ml-tf-398511/docker-repository/summarizer-app
     steps:
     - uses: actions/checkout@v2
 
@@ -26,7 +26,7 @@ jobs:
     # Configure docker to use the gcloud command-line tool as a credential helper
     - name: Authenthification docker
       run: |
-        gcloud auth configure-docker europe-west1-docker.pkg.dev
+        gcloud auth configure-docker europe-west6-docker.pkg.dev
       
     # Build the Docker image
     - name: Build the Docker image
