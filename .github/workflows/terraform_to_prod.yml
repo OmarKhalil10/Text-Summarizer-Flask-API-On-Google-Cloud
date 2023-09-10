@@ -13,7 +13,7 @@ permissions:
 jobs:
   terraform:
     env:
-      GOOGLE_CREDENTIALS: ${{ secrets.GCP_SERVICE_ACCOUNT_AUTH }}
+      GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
     name: "Terraform"
     runs-on: ubuntu-latest
     environment: production
