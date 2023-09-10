@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
 
@@ -31,7 +32,8 @@
                 <h2 class="input-title">TEXT TO SUMMARIZE :</h2>
                 <form action="{{ url_for('background_process_button') }}" method="post">
                     <label for="text"></label>
-                    <textarea class="input-text" id="text" name="text" placeholder="Enter your text here">{{ variable }}</textarea>
+                    <textarea class="input-text" id="text" name="text"
+                        placeholder="Enter your text here">{{ variable }}</textarea>
 
                     <button @click="getLoader" name="text_btn" class="input-btn">Summarize</button>
                 </form>
@@ -43,7 +45,8 @@
                 <h2 class="output-title">SUMMARIZED TEXT :</h2>
                 <form>
                     <label for="story"></label>
-                    <textarea class="output-text" id="story" name="story" placeholder="Summary will appear here">{{ summary }}</textarea>
+                    <textarea class="output-text" id="story" name="story"
+                        placeholder="Summary will appear here">{{ summary }}</textarea>
                 </form>
             </div>
         </main>
@@ -52,24 +55,27 @@
             <div class="footer-description">
                 <h3 class="description-title">SUMMARIZE AI.</h3>
                 <p class="description-text">
-                    Summarize AI uses a model developed by Hugging Face to summarize a text very quickly. 
-                    So you can copy and paste a very long article you don't have time to read and summarize it in a few seconds to get the main idea.<br>
-                    Summarize AI is a personal project that aims to deploy an API to Google Cloud Platform (GCP), while provisioning the required infrastructure with Terraform.
+                    Summarize AI uses a model developed by Hugging Face to summarize a text very quickly.
+                    So you can copy and paste a very long article you don't have time to read and summarize it in a few
+                    seconds to get the main idea.<br>
+                    Summarize AI is a personal project that aims to deploy an API to Google Cloud Platform (GCP), while
+                    provisioning the required infrastructure with Terraform.
                 </p>
             </div>
-            
+
             <div class="footer-links">
                 <a class="anchor-links" href="https://github.com/OmarKhalil10/">
-                    <img class="img-links"  src="https://api.iconify.design/fa-brands/github.svg" alt="Github logo" />
+                    <img class="img-links" src="https://api.iconify.design/fa-brands/github.svg" alt="Github logo" />
                 </a>
                 <a class="anchor-links" href="https://www.linkedin.com/in/omarkhalil0/">
-                    <img class="img-links" src="https://api.iconify.design/devicon/linkedin.svg"alt=" Linkedin logo" />
+                    <img class="img-links" src="https://api.iconify.design/devicon/linkedin.svg" alt=" Linkedin logo" />
                 </a>
                 <a class="anchor-links" href="mailto:omar.khalil498@gmail.com">
-                    <img class="img-links" src="https://api.iconify.design/line-md/email-twotone.svg"alt=" logo" />
+                    <img class="img-links" src="https://api.iconify.design/line-md/email-twotone.svg" alt=" logo" />
                 </a>
             </div>
         </footer>
     </div>
 </body>
+
 </html>
