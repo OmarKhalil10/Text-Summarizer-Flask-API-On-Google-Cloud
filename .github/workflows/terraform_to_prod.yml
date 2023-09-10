@@ -14,6 +14,8 @@ jobs:
   terraform:
     env:
       GOOGLE_CREDENTIALS: ${{ secrets.GCP_SERVICE_ACCOUNT_AUTH }}
+      project_id: ml-tf-398511
+
     name: "Terraform"
     runs-on: ubuntu-latest
     environment: production
