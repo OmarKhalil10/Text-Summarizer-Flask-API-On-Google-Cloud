@@ -12,9 +12,14 @@ permissions:
 
 jobs:
   terraform:
-    env:
-      GOOGLE_CREDENTIALS: ${{ secrets.GCP_SERVICE_ACCOUNT_AUTH }}
-      project_id: ml-tf-398511
+    steps:
+      - name: Set Google Application Credentials
+        run: |
+          echo "$GCP_SERVICE_ACCOUNT_AUTH" > gcp_sa_key.json
+          echo "export GOOGLE_APPLICATION_CREDENTIALS=$(realpath gcp_sa_key.json)" >> $GITHUB_ENV
+        env:
+          GCP_SA_KEY: ${{ secrets.GCP_SERVICE_ACCOUNT_AUTH }}
+          project_id: ml-tf-398511
 
     name: "Terraform"
     runs-on: ubuntu-latest
