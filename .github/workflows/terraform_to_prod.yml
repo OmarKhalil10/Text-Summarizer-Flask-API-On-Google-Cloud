@@ -12,6 +12,8 @@ permissions:
 
 jobs:
   terraform:
+    env:
+      GOOGLE_CREDENTIALS: ${{ secrets.GCP_SERVICE_ACCOUNT_AUTH }}
     name: "Terraform"
     runs-on: ubuntu-latest
     environment: production
@@ -21,20 +23,12 @@ jobs:
         working-directory: ./infra/main
 
     steps:
-    - name: Set Google Application Credentials
-      run: |
-        echo "$GCP_SERVICE_ACCOUNT_AUTH" > gcp_sa_key.json
-        echo "export GOOGLE_APPLICATION_CREDENTIALS=$(realpath gcp_sa_key.json)" >> $GITHUB_ENV
-      env:
-        GCP_SA_KEY: ${{ secrets.GCP_SERVICE_ACCOUNT_AUTH }}
-
     # Checkout the repository to the GitHub Actions runner
     - name: Checkout
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
 
     # Install the latest version of Terraform CLI and configure the Terraform CLI configuration file with a Terraform Cloud user API token
-    - name: Set up Terraform
-      uses: hashicorp/setup-terraform@v1
+    - uses: hashicorp/setup-terraform@v1
       with:
         terraform_version: 1.3.2
 
