@@ -20,7 +20,7 @@ jobs:
 
     defaults:
       run:
-        working-directory: ./main
+        working-directory: ./infra/main
 
     steps:
     # Checkout the repository to the GitHub Actions runner
