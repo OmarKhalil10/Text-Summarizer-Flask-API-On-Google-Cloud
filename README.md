@@ -1,6 +1,6 @@
 [![Python version](https://img.shields.io/badge/python-3.8-blue)](https://www.python.org/downloads/release/python-380/) [![Terraform 1.5.7](https://img.shields.io/badge/terraform-1.5.7-%23623CE4)](https://www.terraform.io) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-[![Infrastructure using Terraform](https://github.com/OmarKhalil10/Text-Summarizer-Flask-API-On-Google-Cloud/actions/workflows/terraform_to_prod.yml/badge.svg)](https://github.com/OmarKhalil10/Text-Summarizer-Flask-API-On-Google-Cloud/actions/workflows/terraform_to_prod.yml)
+[![Infrastructure using Terraform](https://github.com/OmarKhalil10/Text-Summarizer-Flask-API-On-Google-Cloud/actions/workflows/terraform_to_prod.yml/badge.svg)](https://github.com/OmarKhalil10/Text-Summarizer-Flask-API-On-Google-Cloud/actions/workflows/terraform_to_prod.yml) [![Build Docker image](https://github.com/OmarKhalil10/Text-Summarizer-Flask-API-On-Google-Cloud/actions/workflows/deployment.yml/badge.svg)](https://github.com/OmarKhalil10/Text-Summarizer-Flask-API-On-Google-Cloud/actions/workflows/deployment.yml)
 
 # Deployment of a Text Summarizer Flask API to Google Cloud using Cloud Run, Terraform and GitHub Actions
 
