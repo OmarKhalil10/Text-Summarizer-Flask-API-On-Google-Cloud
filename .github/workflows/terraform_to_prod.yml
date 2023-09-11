@@ -37,17 +37,11 @@ jobs:
       id: fmt
       run: terraform fmt -check
 
-    - name: Debug Google Cloud Credentials
-      run: |
-        echo "$GCP_SERVICE_ACCOUNT_AUTH" > gcp_sa_key.json
-        cat gcp_sa_key.json
-        
     # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
     - name: Terraform Init
       id: init
       run: | 
-        echo "$GCP_SERVICE_ACCOUNT_AUTH" > gcp_sa_key.json
-        export GOOGLE_APPLICATION_CREDENTIALS=$(realpath gcp_sa_key.json)
+        export GOOGLE_APPLICATION_CREDENTIALS=./infra/main/infra_service_account.json
         terraform init
       env:
         GOOGLE_CREDENTIALS: ${{ secrets.GCP_SERVICE_ACCOUNT_AUTH }}
