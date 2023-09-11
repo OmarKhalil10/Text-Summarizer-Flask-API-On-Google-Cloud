@@ -12,6 +12,8 @@ permissions:
 
 jobs:
   terraform:
+    env:
+      GOOGLE_CREDENTIALS: ./infra/main/infra_service_account.json
     name: "Terraform"
     runs-on: ubuntu-latest
     environment: production
@@ -25,9 +27,8 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v3
 
-    # Install the latest version of Terraform CLI
-    - name: Setup Terraform
-      uses: hashicorp/setup-terraform@v1
+    # Install the latest version of Terraform CLI and configure the Terraform CLI configuration file with a Terraform Cloud user API token
+    - uses: hashicorp/setup-terraform@v1
       with:
         terraform_version: 1.3.2
 
@@ -39,10 +40,9 @@ jobs:
     # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
     - name: Terraform Init
       id: init
-      run: |
-        export GOOGLE_APPLICATION_CREDENTIALS=infra_service_account.json
+      run: | 
         terraform init
-
+    
     # Linting
     - name: Lint Terraform
       uses: actionshub/terraform-lint@main
