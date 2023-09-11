@@ -12,8 +12,6 @@ permissions:
 
 jobs:
   terraform:
-    env:
-      GOOGLE_CREDENTIALS: ${{ secrets.GCP_SERVICE_ACCOUNT_AUTH }}
     name: "Terraform"
     runs-on: ubuntu-latest
     environment: production
@@ -27,10 +25,18 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v3
 
+    # Set Google Cloud Credentials
+    - name: Set Google Cloud Credentials
+      run: |
+        echo "$GCP_SERVICE_ACCOUNT_AUTH" > gcp_sa_key.json
+        export GOOGLE_APPLICATION_CREDENTIALS=$(realpath gcp_sa_key.json)
+      env:
+        GCP_SERVICE_ACCOUNT_AUTH: ${{ secrets.GCP_SERVICE_ACCOUNT_AUTH }}
+
     # Install the latest version of Terraform CLI and configure the Terraform CLI configuration file with a Terraform Cloud user API token
     - uses: hashicorp/setup-terraform@v1
       with:
-        terraform_version: 1.5.7
+        terraform_version: 1.3.2
 
     # Checks that all Terraform configuration files adhere to a canonical format
     - name: Terraform Format
@@ -42,6 +48,8 @@ jobs:
       id: init
       run: | 
         terraform init
+      env:
+        GOOGLE_CREDENTIALS: ${{ secrets.GCP_SERVICE_ACCOUNT_AUTH }}
     
     # Linting
     - name: Lint Terraform
@@ -55,8 +63,12 @@ jobs:
     # Generates an execution plan for Terraform
     - name: Terraform Plan
       run: terraform plan -no-color -out=./terraform_plan
+      env:
+        GOOGLE_CREDENTIALS: ${{ secrets.GCP_SERVICE_ACCOUNT_AUTH }}
 
     # Apply the changes
     - name: Terraform Apply
       id: apply
       run: terraform apply -auto-approve ./terraform_plan
+      env:
+        GOOGLE_CREDENTIALS: ${{ secrets.GCP_SERVICE_ACCOUNT_AUTH }}
