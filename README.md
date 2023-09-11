@@ -1,6 +1,7 @@
 [![Python version](https://img.shields.io/badge/python-3.8-blue)](https://www.python.org/downloads/release/python-380/) [![Terraform 1.5.7](https://img.shields.io/badge/terraform-1.5.7-%23623CE4)](https://www.terraform.io) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 
+
 # Deployment of a Text Summarizer Flask API to Google Cloud using Cloud Run, Terraform and GitHub Actions
 
 The aim of this individual project is to utilize Docker to containerize a Flask API and deploy it on Google Cloud Run. Simultaneously, we intend to employ Terraform for setting up the necessary infrastructure. It is recommended to embrace an Infrastructure-as-Code (IaC) approach for provisioning your infrastructure when deploying an API in the cloud. IaC offers numerous advantages compared to manually configuring your cloud environment, such as effortless replication and the capability to ensure uniformity across different staging environments.
