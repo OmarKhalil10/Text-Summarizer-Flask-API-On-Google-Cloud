@@ -13,7 +13,7 @@ permissions:
 jobs:
   terraform:
     env:
-      GOOGLE_CREDENTIALS: ./infra/main/infra_service_account.json
+      GOOGLE_CREDENTIALS: ${{ github.workspace }}/infra/main/infra_service_account.json
     name: "Terraform"
     runs-on: ubuntu-latest
     environment: production
