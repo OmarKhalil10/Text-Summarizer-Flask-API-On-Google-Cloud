@@ -18,7 +18,7 @@ jobs:
 
     defaults:
       run:
-        working-directory: ./infra/main
+        working-directory: ../../infra/main
 
     steps:
     # Checkout the repository to the GitHub Actions runner
@@ -45,7 +45,7 @@ jobs:
 
     - name: List Working Directory Contents
       run: |
-        ls -l ./infra/main
+        ls -l ../../infra/main
 
 
     # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
