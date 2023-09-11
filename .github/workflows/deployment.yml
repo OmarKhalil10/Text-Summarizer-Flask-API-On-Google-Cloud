@@ -6,33 +6,31 @@ on:
   pull_request:
     branches:
       - main
-      
 jobs:
   setup-build-publish-deploy:
     name: Setup, Build, Publish, and Deploy
     runs-on: ubuntu-latest
     env:
-      IMAGE_NAME: europe-west6-docker.pkg.dev/ml-tf-398511/docker-repository/summarizer-app
-
+          IMAGE_NAME: europe-west6-docker.pkg.dev/ml-tf-398511/docker-repository/summarizer-app
     steps:
     - uses: actions/checkout@v2
 
-    - name: Set up Cloud SDK
-      uses: google-github-actions/setup-gcloud@v0
+    - id: 'auth'
+      uses: 'google-github-actions/auth@v0'
+      with:
+        credentials_json: '${{ secrets.GCP_DOCKER_PUSHER_AUTH }}'
 
-    # Authenticate using your service account credentials
-    - name: Authenticate using service account
-      run: |
-        gcloud auth activate-service-account --key-file=${{ github.workspace }}/infra/main/docker_service_account.json
+    - name: Set up Cloud SDK
+      uses: 'google-github-actions/setup-gcloud@v0'
 
     # Configure docker to use the gcloud command-line tool as a credential helper
-    - name: Authentication for Docker
+    - name: Authenthification docker
       run: |
         gcloud auth configure-docker europe-west6-docker.pkg.dev
-
+      
     # Build the Docker image
     - name: Build the Docker image
-      run: |
+      run: |        
         docker build . --tag $IMAGE_NAME
 
     # Push the Docker image to Google Container Registry
