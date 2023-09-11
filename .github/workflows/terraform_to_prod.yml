@@ -1,7 +1,7 @@
 on:
   release:
     types: [published]
-    
+
 name: release-main
 
 jobs:
@@ -12,7 +12,7 @@ jobs:
     defaults:
       run:
         shell: bash
-        working-directory: ./main
+        working-directory: ./infra/main
 
     steps:
       - name: Checkout
