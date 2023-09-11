@@ -212,7 +212,6 @@ terraform.rc
 !.vscode/launch.json
 !.vscode/extensions.json
 *.code-workspace
-*.json
 
 # Local History for Visual Studio Code
 .history/
